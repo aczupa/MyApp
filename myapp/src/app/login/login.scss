@@ -1,0 +1,107 @@
+$navy: rgb(7, 45, 79);
+$navy-hover: rgba(7, 45, 79, 0.85);
+$gray: #f5f7fa;
+
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 1rem;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  padding: 1.5rem;
+  background-color: $gray;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  h2 {
+    margin: 0 0 1.5rem;
+    text-align: center;
+    color: $navy;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+}
+
+.field {
+  position: relative;
+  margin-bottom: 1rem;
+
+  input {
+    width: 100%;
+    height: 3.5rem;
+    padding: 1.625rem 0.75rem 0.625rem;
+    box-sizing: border-box;
+    font-size: 1rem;
+    background: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+
+    &:focus {
+      outline: none;
+      border-color: $navy;
+      box-shadow: 0 0 0 0.2rem rgba(7, 45, 79, 0.2);
+    }
+  }
+
+  label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 1rem 0.75rem;
+    color: #6c757d;
+    pointer-events: none;
+    transform-origin: 0 0;
+    transition: transform 0.1s ease-in-out;
+  }
+
+  input:focus ~ label,
+  input:not(:placeholder-shown) ~ label {
+    color: $navy;
+    transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+  }
+}
+
+.error {
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #842029;
+  background: #f8d7da;
+  border-radius: 0.375rem;
+}
+
+button {
+  width: 100%;
+  padding: 8px 18px;
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: 1rem;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #fff;
+  background-color: $navy;
+  border: 1px solid $navy;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: $navy-hover;
+    border-color: $navy-hover;
+  }
+}

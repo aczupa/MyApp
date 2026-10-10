@@ -1,4 +1,8 @@
 
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using MyApp.api.Data;
+
 namespace MyApp.api
 {
     public class Program
@@ -13,6 +17,11 @@ namespace MyApp.api
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddDbContext<AppDbContext>(o =>
+    o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddAuthorization();
+            builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+                .AddEntityFrameworkStores<AppDbContext>();
 
             builder.Services.AddCors(options =>
             {
@@ -36,12 +45,11 @@ namespace MyApp.api
             app.UseHttpsRedirection();
             app.UseCors("AllowAngular");
 
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
-
+            app.MapIdentityApi<IdentityUser>();
             app.MapControllers();
-
             app.Run();
         }
     }
