@@ -1,0 +1,31 @@
+<div class="login-card">
+  <h2>Créer un compte</h2>
+
+  <form (ngSubmit)="register()">
+    <div class="field">
+      <input type="email" id="email" name="email" placeholder=" " autocomplete="username"
+             [(ngModel)]="email" required />
+      <label for="email">Adresse e-mail</label>
+    </div>
+
+    <div class="field">
+      <input type="password" id="password" name="password" placeholder=" " autocomplete="new-password"
+             [(ngModel)]="password" required />
+      <label for="password">Mot de passe</label>
+    </div>
+
+    <div class="field">
+      <input type="password" id="confirm" name="confirm" placeholder=" " autocomplete="new-password"
+             [(ngModel)]="confirm" required />
+      <label for="confirm">Confirmer le mot de passe</label>
+    </div>
+
+    @if (error()) {
+      <div class="error">{{ error() }}</div>
+    }
+
+    <button type="submit">S'inscrire</button>
+  </form>
+
+  <p class="link">Vous avez déjà un compte ? <a routerLink="/">Se connecter</a></p>
+</div>

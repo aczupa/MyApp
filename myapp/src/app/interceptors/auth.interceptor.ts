@@ -1,10 +1,22 @@
 import { inject } from '@angular/core';
 import { HttpInterceptorFn } from '@angular/common/http';
+import { catchError, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const token = inject(AuthService).token();
-  return token
-    ? next(req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }))
-    : next(req);
+  const auth = inject(AuthService);
+  const token = auth.token();
+
+  const request = token
+    ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
+    : req;
+
+  return next(request).pipe(
+    catchError(err => {
+      if (err.status === 401 && token) {
+        auth.logout();
+      }
+      return throwError(() => err);
+    })
+  );
 };

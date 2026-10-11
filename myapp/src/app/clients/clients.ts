@@ -1,9 +1,10 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { ClientService } from '../services/client.service';
+import { LogoutButton } from '../logout-button/logout-button';
 
 @Component({
   selector: 'app-clients',
-  imports: [],
+  imports: [LogoutButton],
   templateUrl: './clients.html',
   styleUrl: './clients.scss',
 })
