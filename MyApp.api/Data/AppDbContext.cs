@@ -15,7 +15,9 @@ namespace MyApp.api.Data
         {
             base.OnModelCreating(builder);
 
-            
+            builder.Entity<Client>()
+                .Property(c => c.FormeJuridique)
+                .HasConversion<string>();
         }
     }
 }

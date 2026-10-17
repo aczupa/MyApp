@@ -2,18 +2,19 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MyApp.api.Data;
+using System.Text.Json.Serialization;
 
 namespace MyApp.api
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+    .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -21,6 +22,7 @@ namespace MyApp.api
     o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddAuthorization();
             builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<AppDbContext>();
 
             builder.Services.AddCors(options =>
@@ -34,6 +36,19 @@ namespace MyApp.api
 
 
             var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+                if (!await roleManager.RoleExistsAsync("Admin"))
+                    await roleManager.CreateAsync(new IdentityRole("Admin"));
+
+                var admin = await userManager.FindByEmailAsync("test@test.com");
+                if (admin != null && !await userManager.IsInRoleAsync(admin, "Admin"))
+                    await userManager.AddToRoleAsync(admin, "Admin");
+            }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

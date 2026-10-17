@@ -1,0 +1,65 @@
+<div class="login-card">
+  <h2>Ajouter un client</h2>
+
+  <form (ngSubmit)="save()">
+    <div class="field">
+      <input type="text" id="denominationSociale" name="denominationSociale" placeholder=" "
+             [(ngModel)]="model.denominationSociale" required />
+      <label for="denominationSociale">Dénomination sociale</label>
+    </div>
+
+    <div class="field">
+      <select id="forme" name="forme" [(ngModel)]="model.formeJuridique" required>
+        <option value="" disabled>Choisir…</option>
+        @for (f of formes(); track f.value) {
+          <option [value]="f.value">{{ f.label }}</option>
+        }
+      </select>
+      <label for="forme">Forme juridique</label>
+    </div>
+
+    <div class="field">
+      <input type="text" id="adresse" name="adresse" placeholder=" " [(ngModel)]="model.adresse" />
+      <label for="adresse">Adresse</label>
+    </div>
+
+    <div class="field">
+      <input type="text" id="ville" name="ville" placeholder=" " [(ngModel)]="model.ville" />
+      <label for="ville">Ville</label>
+    </div>
+
+    <div class="field">
+      <input type="text" id="codePostal" name="codePostal" placeholder=" " [(ngModel)]="model.codePostal" />
+      <label for="codePostal">Code postal</label>
+    </div>
+
+    <div class="field">
+      <input type="text" id="pays" name="pays" placeholder=" " [(ngModel)]="model.pays" />
+      <label for="pays">Pays</label>
+    </div>
+
+    <div class="field">
+      <input type="tel" id="telephone" name="telephone" placeholder=" " [(ngModel)]="model.telephone" />
+      <label for="telephone">Téléphone</label>
+    </div>
+
+    <div class="field">
+      <input type="email" id="email" name="email" placeholder=" " [(ngModel)]="model.email" />
+      <label for="email">E-mail</label>
+    </div>
+
+    <div class="field">
+      <input type="text" id="representantLegal" name="representantLegal" placeholder=" "
+             [(ngModel)]="model.representantLegal" />
+      <label for="representantLegal">Représentant légal</label>
+    </div>
+
+    @if (error()) {
+      <div class="error">{{ error() }}</div>
+    }
+
+    <button type="submit">Enregistrer</button>
+  </form>
+
+  <p class="link"><a routerLink="/clients">Retour à la liste</a></p>
+</div>

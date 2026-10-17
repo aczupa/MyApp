@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using MyApp.api.Data;
+using MyApp.api.Models;
+using MyApp.api.Models.DTOs;
 
 namespace MyApp.api.Controllers
 {
@@ -9,16 +13,62 @@ namespace MyApp.api.Controllers
     [ApiController]
     public class ClientController : ControllerBase
     {
-        [HttpGet]
-        public IActionResult Get()
+        private readonly AppDbContext _context;
+
+        public ClientController(AppDbContext context)
         {
-            var client = new[]
+            _context = context;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            var clients = await _context.Clients.ToListAsync();
+
+            return Ok(clients.Select(c => new
             {
-                new { Id = 1, Name = "John Doe", Statut = "Private" },
-                new { Id = 2, Name = "Smith", Statut = "Enterprise" }
+                c.Id,
+                c.DenominationSociale,
+                FormeJuridique = c.FormeJuridique.GetDisplayName(),
+                c.Adresse,
+                c.Ville,
+                c.CodePostal,
+                c.Pays,
+                c.Telephone,
+                c.Email,
+                c.RepresentantLegal
+            }));
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Create(CreateClientDto dto)
+        {
+            var client = new Client
+            {
+                DenominationSociale = dto.DenominationSociale,
+                FormeJuridique = dto.FormeJuridique,
+                Adresse = dto.Adresse,
+                Ville = dto.Ville,
+                CodePostal = dto.CodePostal,
+                Pays = dto.Pays,
+                Telephone = dto.Telephone,
+                Email = dto.Email,
+                RepresentantLegal = dto.RepresentantLegal
             };
 
-            return Ok(client);
+            _context.Clients.Add(client);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { client.Id });
+
+        }
+
+        [HttpGet("formes-juridiques")]
+        public IActionResult GetFormesJuridiques()
+        {
+            return Ok(Enum.GetValues<FormeJuridique>()
+                .Select(f => new { value = f.ToString(), label = f.GetDisplayName() }));
         }
     }
 }

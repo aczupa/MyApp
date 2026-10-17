@@ -1,18 +1,28 @@
 <app-logout-button />
-
+@if (auth.isAdmin()) {
+  <button routerLink="/clients/new">Ajouter un client</button>
+}
 <h2>Clients</h2>
 
 <table>
   <tr>
     <th>ID</th>
-    <th>Nom</th>
-    <th>Statuts</th>
+    <th>Dénomination sociale</th>
+    <th>Forme juridique</th>
+    <th>Ville</th>
+    <th>Pays</th>
+    <th>Téléphone</th>
+    <th>Email</th>
   </tr>
 @for (c of clients(); track c.id) {
   <tr>
     <td>{{ c.id }}</td>
-    <td>{{ c.name }}</td>
-    <td>{{ c.statut }}</td>
+    <td>{{ c.denominationSociale }}</td>
+    <td>{{ c.formeJuridique }}</td>
+    <td>{{ c.ville }}</td>
+    <td>{{ c.pays }}</td>
+    <td>{{ c.telephone }}</td>
+    <td>{{ c.email }}</td>
   </tr>
 }
 </table>

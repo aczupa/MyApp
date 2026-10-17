@@ -8,9 +8,17 @@ export class ClientService {
 
   private apiUrl = 'http://localhost:5115/api/client';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getClients() {
     return this.http.get(this.apiUrl);
+  }
+
+  getFormesJuridiques() {
+    return this.http.get<{ value: string; label: string }[]>(`${this.apiUrl}/formes-juridiques`);
+  }
+
+  addClient(client: Record<string, string>) {
+    return this.http.post(this.apiUrl, client);
   }
 }
