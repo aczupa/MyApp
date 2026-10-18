@@ -26,9 +26,12 @@
     <td>{{ c.pays }}</td>
     <td>{{ c.telephone }}</td>
     <td>{{ c.email }}</td>
-    @if (auth.isAdmin()) {
-      <td><button [routerLink]="['/clients', c.id, 'edit']">Modifier</button></td>
-    }
+   @if (auth.isAdmin()) {
+  <td>
+    <button [routerLink]="['/clients', c.id, 'edit']">Modifier</button>
+    <button (click)="delete(c.id)">Supprimer</button>
+  </td>
+}
   </tr>
 }
 </table>

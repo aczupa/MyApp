@@ -29,4 +29,7 @@ export class ClientService {
   updateClient(id: number, client: Record<string, string>) {
     return this.http.put(`${this.apiUrl}/${id}`, client);
   }
+  deleteClient(id: number) {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
 }

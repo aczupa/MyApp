@@ -20,4 +20,12 @@ export class Clients implements OnInit {
       this.clients.set(data as any[]);
     });
   }
+
+  delete(id: number) {
+    if (!confirm('Supprimer ce client ?')) return;
+
+    this.clientService.deleteClient(id).subscribe(() => {
+      this.clients.update(list => list.filter(c => c.id !== id));
+    });
+  }
 }
