@@ -21,4 +21,12 @@ export class ClientService {
   addClient(client: Record<string, string>) {
     return this.http.post(this.apiUrl, client);
   }
+
+  getClient(id: number) {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  }
+
+  updateClient(id: number, client: Record<string, string>) {
+    return this.http.put(`${this.apiUrl}/${id}`, client);
+  }
 }

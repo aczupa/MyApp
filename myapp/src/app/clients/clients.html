@@ -5,15 +5,18 @@
 <h2>Clients</h2>
 
 <table>
-  <tr>
-    <th>ID</th>
-    <th>Dénomination sociale</th>
-    <th>Forme juridique</th>
-    <th>Ville</th>
-    <th>Pays</th>
-    <th>Téléphone</th>
-    <th>Email</th>
-  </tr>
+<tr>
+  <th>ID</th>
+  <th>Dénomination sociale</th>
+  <th>Forme juridique</th>
+  <th>Ville</th>
+  <th>Pays</th>
+  <th>Téléphone</th>
+  <th>Email</th>
+  @if (auth.isAdmin()) {
+    <th></th>
+  }
+</tr>
 @for (c of clients(); track c.id) {
   <tr>
     <td>{{ c.id }}</td>
@@ -23,6 +26,9 @@
     <td>{{ c.pays }}</td>
     <td>{{ c.telephone }}</td>
     <td>{{ c.email }}</td>
+    @if (auth.isAdmin()) {
+      <td><button [routerLink]="['/clients', c.id, 'edit']">Modifier</button></td>
+    }
   </tr>
 }
 </table>

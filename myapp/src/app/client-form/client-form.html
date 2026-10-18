@@ -1,5 +1,5 @@
 <div class="login-card">
-  <h2>Ajouter un client</h2>
+ <h2>{{ id !== null ? 'Modifier le client' : 'Ajouter un client' }}</h2>
 
   <form (ngSubmit)="save()">
     <div class="field">
