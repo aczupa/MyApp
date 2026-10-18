@@ -11,5 +11,11 @@ export const routes: Routes = [
   { path: 'clients', component: Clients, canActivate: [authGuard] },
   { path: 'clients/new', component: ClientForm, canActivate: [authGuard, adminGuard] },
   { path: 'clients/:id/edit', component: ClientForm, canActivate: [authGuard, adminGuard] },
+  {
+    path: 'clients/:id',
+    loadComponent: () =>
+      import('./client-detail/client-detail')
+        .then(m => m.ClientDetail)
+  },
   { path: 'register', component: Register },
 ];

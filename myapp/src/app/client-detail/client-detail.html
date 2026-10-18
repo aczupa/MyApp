@@ -1,0 +1,85 @@
+<h2>Client</h2>
+
+@if (client(); as c) {
+
+  <div class="client-card">
+
+    <div class="client-header">
+      <h3>{{ c.denominationSociale }}</h3>
+      <span>{{ c.formeJuridique }}</span>
+    </div>
+
+    <div class="client-section">
+      <h4>Informations générales</h4>
+
+      <div class="client-grid">
+
+        <div class="client-field">
+          <label>Adresse</label>
+          <div>{{ c.adresse }}</div>
+        </div>
+
+        <div class="client-field">
+          <label>Code postal</label>
+          <div>{{ c.codePostal }}</div>
+        </div>
+
+        <div class="client-field">
+          <label>Ville</label>
+          <div>{{ c.ville }}</div>
+        </div>
+
+        <div class="client-field">
+          <label>Pays</label>
+          <div>{{ c.pays }}</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="client-section">
+      <h4>Contact</h4>
+
+      <div class="client-grid">
+
+        <div class="client-field">
+          <label>Téléphone</label>
+          <div>{{ c.telephone }}</div>
+        </div>
+
+        <div class="client-field">
+          <label>Email</label>
+          <div>{{ c.email }}</div>
+        </div>
+
+        <div class="client-field">
+          <label>Représentant légal</label>
+          <div>{{ c.representantLegal }}</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="client-actions">
+
+      <a routerLink="/clients" class="back-link">
+        <i class="bi bi-arrow-left"></i>
+        Retour aux clients
+      </a>
+
+      @if (auth.isAdmin()) {
+        <button [routerLink]="['/clients', c.id, 'edit']">
+          <i class="bi bi-pencil"></i>
+          Modifier
+        </button>
+      }
+
+    </div>
+
+  </div>
+
+} @else {
+
+  <p>Chargement du client...</p>
+
+}

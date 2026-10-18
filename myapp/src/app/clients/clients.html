@@ -20,7 +20,9 @@
 @for (c of clients(); track c.id) {
   <tr>
     <td>{{ c.id }}</td>
-    <td>{{ c.denominationSociale }}</td>
+    <td><a [routerLink]="['/clients', c.id]">
+        {{ c.denominationSociale }}
+      </a></td>
     <td>{{ c.formeJuridique }}</td>
     <td>{{ c.ville }}</td>
     <td>{{ c.pays }}</td>
