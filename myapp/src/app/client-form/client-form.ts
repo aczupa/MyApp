@@ -20,10 +20,14 @@ export class ClientForm implements OnInit {
     telephone: '',
     email: '',
     representantLegal: '',
+    periodiciteTva: 'NonConcerne',
+    jourTva: null as number | null,
   };
 
   id: number | null = null;
   formes = signal<{ value: string; label: string }[]>([]);
+  periodicites = signal<{ value: string; label: string }[]>([]);
+  jours = [19, 20, 21, 24, 25];
   error = signal('');
 
   constructor(
@@ -35,6 +39,7 @@ export class ClientForm implements OnInit {
 
   ngOnInit() {
     this.clientService.getFormesJuridiques().subscribe(f => this.formes.set(f));
+    this.clientService.getPeriodicitesTva().subscribe(p => this.periodicites.set(p));
 
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
@@ -49,6 +54,13 @@ export class ClientForm implements OnInit {
   save() {
     if (!this.model.denominationSociale.trim() || !this.model.formeJuridique) {
       this.error.set('Veuillez renseigner la dénomination sociale et la forme juridique.');
+      return;
+    }
+
+    if (this.model.periodiciteTva === 'NonConcerne') {
+      this.model.jourTva = null;
+    } else if (!this.model.jourTva) {
+      this.error.set('Veuillez choisir le jour de déclaration de la TVA.');
       return;
     }
 

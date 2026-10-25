@@ -19,11 +19,31 @@ namespace MyApp.api.Controllers
         {
             _context = context;
         }
-
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(int? annee, int? mois)
         {
             var clients = await _context.Clients.ToListAsync();
+            var filtre = annee is not null && mois is >= 1 and <= 12;
+
+            if (filtre)
+            {
+                clients = clients
+                    .Where(c => c.GetJourTva(mois!.Value) != null)
+                    .OrderBy(c => c.GetJourTva(mois!.Value))
+                    .ToList();
+            }
+
+            string Tva(Client c)
+            {
+                if (c.PeriodiciteTva == PeriodiciteTva.NonConcerne)
+                    return c.PeriodiciteTva.GetDisplayName();
+
+                if (!filtre)
+                    return $"{c.PeriodiciteTva.GetDisplayName()}, le {c.JourTva}";
+
+                var jour = Math.Min(c.JourTva!.Value, DateTime.DaysInMonth(annee!.Value, mois!.Value));
+                return $"{jour:00}/{mois:00}/{annee}";
+            }
 
             return Ok(clients.Select(c => new
             {
@@ -36,7 +56,8 @@ namespace MyApp.api.Controllers
                 c.Pays,
                 c.Telephone,
                 c.Email,
-                c.RepresentantLegal
+                c.RepresentantLegal,
+                Tva = Tva(c)
             }));
         }
 
@@ -54,14 +75,15 @@ namespace MyApp.api.Controllers
                 Pays = dto.Pays,
                 Telephone = dto.Telephone,
                 Email = dto.Email,
-                RepresentantLegal = dto.RepresentantLegal
+                RepresentantLegal = dto.RepresentantLegal,
+                PeriodiciteTva = dto.PeriodiciteTva,
+                JourTva = dto.JourTva
             };
 
             _context.Clients.Add(client);
             await _context.SaveChangesAsync();
 
             return Ok(new { client.Id });
-
         }
 
         [HttpGet("formes-juridiques")]
@@ -69,6 +91,74 @@ namespace MyApp.api.Controllers
         {
             return Ok(Enum.GetValues<FormeJuridique>()
                 .Select(f => new { value = f.ToString(), label = f.GetDisplayName() }));
+        }
+
+        [HttpGet("periodicites-tva")]
+        public IActionResult GetPeriodicitesTva()
+        {
+            return Ok(Enum.GetValues<PeriodiciteTva>()
+                .Select(p => new { value = p.ToString(), label = p.GetDisplayName() }));
+        }
+
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetClientById(int id)
+        {
+            var c = await _context.Clients.FindAsync(id);
+            if (c == null) return NotFound();
+
+            return Ok(new
+            {
+                c.Id,
+                c.DenominationSociale,
+                FormeJuridique = c.FormeJuridique.ToString(),
+                FormeJuridiqueLabel = c.FormeJuridique.GetDisplayName(),
+                c.Adresse,
+                c.Ville,
+                c.CodePostal,
+                c.Pays,
+                c.Telephone,
+                c.Email,
+                c.RepresentantLegal,
+                PeriodiciteTva = c.PeriodiciteTva.ToString(),
+                PeriodiciteTvaLabel = c.PeriodiciteTva.GetDisplayName(),
+                c.JourTva,
+                Echeances = Enumerable.Range(1, 12).Select(m => new { mois = m, jour = c.GetJourTva(m) })
+            });
+        }
+
+        [HttpPut("{id:int}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateClient(int id, CreateClientDto dto)
+        {
+            var client = await _context.Clients.FindAsync(id);
+            if (client == null) return NotFound();
+
+            client.DenominationSociale = dto.DenominationSociale;
+            client.FormeJuridique = dto.FormeJuridique;
+            client.Adresse = dto.Adresse;
+            client.Ville = dto.Ville;
+            client.CodePostal = dto.CodePostal;
+            client.Pays = dto.Pays;
+            client.Telephone = dto.Telephone;
+            client.Email = dto.Email;
+            client.RepresentantLegal = dto.RepresentantLegal;
+            client.PeriodiciteTva = dto.PeriodiciteTva;
+            client.JourTva = dto.JourTva;
+
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
+        [HttpDelete("{id:int}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteClient(int id)
+        {
+            var client = await _context.Clients.FindAsync(id);
+            if (client == null) return NotFound();
+
+            _context.Clients.Remove(client);
+            await _context.SaveChangesAsync();
+            return NoContent();
         }
     }
 }

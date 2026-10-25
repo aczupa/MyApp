@@ -6,7 +6,8 @@
 
     <div class="client-header">
       <h3>{{ c.denominationSociale }}</h3>
-      <span>{{ c.formeJuridique }}</span>
+
+      <span>{{ c.formeJuridiqueLabel }}</span>
     </div>
 
     <div class="client-section">
@@ -60,6 +61,25 @@
       </div>
     </div>
 
+        <div class="client-section">
+      <h4>TVA : {{ c.periodiciteTvaLabel }}</h4>
+
+      @if (c.periodiciteTva !== 'NonConcerne') {
+        <table>
+          <tr>
+            <th>Mois</th>
+            <th>Échéance</th>
+          </tr>
+          @for (e of c.echeances; track e.mois) {
+            <tr>
+              <td>{{ mois[e.mois - 1] }}</td>
+              <td>{{ e.jour ? e.jour + ' ' + mois[e.mois - 1] : 'Non concerné' }}</td>
+            </tr>
+          }
+        </table>
+      }
+    </div>
+
     <div class="client-actions">
 
       <a routerLink="/clients" class="back-link">
@@ -78,8 +98,8 @@
 
   </div>
 
+} @else if (error()) {
+  <p>Client introuvable.</p>
 } @else {
-
   <p>Chargement du client...</p>
-
 }

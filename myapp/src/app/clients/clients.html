@@ -3,37 +3,65 @@
   <button routerLink="/clients/new">Ajouter un client</button>
 }
 <h2>Clients</h2>
+<div class="filtre">
+  <select #mo (change)="setFiltre(mo.value, an.value)">
+    <option value="">Tous les mois</option>
+    @for (m of mois; track $index) {
+      <option [value]="$index + 1">{{ m }}</option>
+    }
+  </select>
+  <input #an type="number" [value]="annee" (change)="setFiltre(mo.value, an.value)" />
+</div>
 
-<table>
-<tr>
-  <th>ID</th>
-  <th>Dénomination sociale</th>
-  <th>Forme juridique</th>
-  <th>Ville</th>
-  <th>Pays</th>
-  <th>Téléphone</th>
-  <th>Email</th>
-  @if (auth.isAdmin()) {
-    <th></th>
-  }
-</tr>
-@for (c of clients(); track c.id) {
-  <tr>
-    <td>{{ c.id }}</td>
-    <td><a [routerLink]="['/clients', c.id]">
-        {{ c.denominationSociale }}
-      </a></td>
-    <td>{{ c.formeJuridique }}</td>
-    <td>{{ c.ville }}</td>
-    <td>{{ c.pays }}</td>
-    <td>{{ c.telephone }}</td>
-    <td>{{ c.email }}</td>
-   @if (auth.isAdmin()) {
-  <td>
-    <button [routerLink]="['/clients', c.id, 'edit']">Modifier</button>
-    <button (click)="delete(c.id)">Supprimer</button>
-  </td>
+@if (filtreActif()) {
+  <table>
+    <tr>
+      <th>Dénomination sociale</th>
+      <th>TVA</th>
+    </tr>
+    @for (c of clients(); track c.id) {
+      <tr>
+        <td><a [routerLink]="['/clients', c.id]">{{ c.denominationSociale }}</a></td>
+        <td>{{ c.tva }}</td>
+      </tr>
+    } @empty {
+      <tr><td colspan="2">Aucune échéance de TVA pour cette période.</td></tr>
+    }
+  </table>
+} @else {
+  <table>
+    <tr>
+      <th>ID</th>
+      <th>Dénomination sociale</th>
+      <th>Forme juridique</th>
+      <th>TVA</th>
+      <th>Ville</th>
+      <th>Pays</th>
+      <th>Téléphone</th>
+      <th>Email</th>
+      @if (auth.isAdmin()) {
+        <th></th>
+      }
+    </tr>
+    @for (c of clients(); track c.id) {
+      <tr>
+        <td>{{ c.id }}</td>
+        <td><a [routerLink]="['/clients', c.id]">{{ c.denominationSociale }}</a></td>
+        <td>{{ c.formeJuridique }}</td>
+        <td>{{ c.tva }}</td>
+        <td>{{ c.ville }}</td>
+        <td>{{ c.pays }}</td>
+        <td>{{ c.telephone }}</td>
+        <td>{{ c.email }}</td>
+        @if (auth.isAdmin()) {
+          <td>
+            <button [routerLink]="['/clients', c.id, 'edit']">Modifier</button>
+            <button (click)="delete(c.id)">Supprimer</button>
+          </td>
+        }
+      </tr>
+    } @empty {
+      <tr><td colspan="9">Aucun client.</td></tr>
+    }
+  </table>
 }
-  </tr>
-}
-</table>

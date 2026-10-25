@@ -18,6 +18,10 @@ namespace MyApp.api.Data
             builder.Entity<Client>()
                 .Property(c => c.FormeJuridique)
                 .HasConversion<string>();
+
+            builder.Entity<Client>()
+    .Property(c => c.PeriodiciteTva)
+    .HasConversion<string>();
         }
     }
 }

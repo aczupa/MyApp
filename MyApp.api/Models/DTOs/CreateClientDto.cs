@@ -2,7 +2,7 @@
 
 namespace MyApp.api.Models.DTOs
 {
-    public class CreateClientDto
+    public class CreateClientDto : IValidatableObject
     {
         [Required, StringLength(300)]
         public string DenominationSociale { get; set; } = string.Empty;
@@ -15,5 +15,15 @@ namespace MyApp.api.Models.DTOs
         public string Email { get; set; } = string.Empty;
         public string RepresentantLegal { get; set; } = string.Empty;
 
+        public PeriodiciteTva PeriodiciteTva { get; set; }
+
+        [Range(1, 31)]
+        public int? JourTva { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext context)
+        {
+            if (PeriodiciteTva != PeriodiciteTva.NonConcerne && JourTva == null)
+                yield return new ValidationResult("Le jour de TVA est obligatoire.", new[] { nameof(JourTva) });
+        }
     }
 }

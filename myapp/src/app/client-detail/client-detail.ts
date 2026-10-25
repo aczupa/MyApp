@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ClientService } from '../services/client.service';
 import { AuthService } from '../services/auth.service';
+import { MOIS } from '../mois';
 
 @Component({
   selector: 'app-client-detail',
@@ -12,7 +13,8 @@ import { AuthService } from '../services/auth.service';
 export class ClientDetail implements OnInit {
 
   client = signal<any | null>(null);
-
+  error = signal(false);
+  protected mois = MOIS;
   constructor(
     private route: ActivatedRoute,
     private clientService: ClientService,
@@ -28,6 +30,7 @@ export class ClientDetail implements OnInit {
       },
       error: err => {
         console.error('Erreur lors du chargement du client', err);
+        this.error.set(true);
       }
     });
   }

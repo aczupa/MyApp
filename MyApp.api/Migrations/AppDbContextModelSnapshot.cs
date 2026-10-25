@@ -248,7 +248,14 @@ namespace MyApp.api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("JourTva")
+                        .HasColumnType("int");
+
                     b.Property<string>("Pays")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PeriodiciteTva")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

@@ -10,24 +10,27 @@ export class ClientService {
 
   constructor(private http: HttpClient) { }
 
-  getClients() {
-    return this.http.get(this.apiUrl);
+  getClients(filtre?: { mois: string; annee: string }) {
+    return this.http.get(this.apiUrl, { params: filtre });
   }
 
   getFormesJuridiques() {
     return this.http.get<{ value: string; label: string }[]>(`${this.apiUrl}/formes-juridiques`);
   }
 
-  addClient(client: Record<string, string>) {
+  getPeriodicitesTva() {
+    return this.http.get<{ value: string; label: string }[]>(`${this.apiUrl}/periodicites-tva`);
+  }
+
+  addClient(client: object) {
     return this.http.post(this.apiUrl, client);
   }
 
+  updateClient(id: number, client: object) {
+    return this.http.put(`${this.apiUrl}/${id}`, client);
+  }
   getClient(id: number) {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
-  }
-
-  updateClient(id: number, client: Record<string, string>) {
-    return this.http.put(`${this.apiUrl}/${id}`, client);
   }
   deleteClient(id: number) {
     return this.http.delete(`${this.apiUrl}/${id}`);

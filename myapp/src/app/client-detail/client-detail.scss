@@ -6,6 +6,10 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+table {
+  box-shadow: none;
+  margin: 0;
+}
 .client-header {
   padding: 1.5rem 2rem;
   background-color: var(--lc-navy);
