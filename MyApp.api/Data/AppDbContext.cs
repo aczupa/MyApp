@@ -10,6 +10,7 @@ namespace MyApp.api.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         public DbSet<Client> Clients { get; set; }
+        public DbSet<ValidationTva> ValidationsTva { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -22,6 +23,10 @@ namespace MyApp.api.Data
             builder.Entity<Client>()
     .Property(c => c.PeriodiciteTva)
     .HasConversion<string>();
+
+            builder.Entity<ValidationTva>()
+    .HasIndex(v => new { v.ClientId, v.Annee, v.Mois })
+    .IsUnique();
         }
     }
 }

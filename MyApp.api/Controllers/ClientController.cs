@@ -33,6 +33,12 @@ namespace MyApp.api.Controllers
                     .ToList();
             }
 
+            var validees = filtre
+    ? (await _context.ValidationsTva
+        .Where(v => v.Annee == annee && v.Mois == mois)
+        .Select(v => v.ClientId)
+        .ToListAsync()).ToHashSet()
+    : new HashSet<int>();
             string Tva(Client c)
             {
                 if (c.PeriodiciteTva == PeriodiciteTva.NonConcerne)
@@ -157,6 +163,34 @@ namespace MyApp.api.Controllers
             if (client == null) return NotFound();
 
             _context.Clients.Remove(client);
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
+        [HttpPut("{id:int}/tva-validation")]
+        
+        public async Task<IActionResult> SetTvaValidation(int id, ValidationTvaDto dto)
+        {
+            if (!await _context.Clients.AnyAsync(c => c.Id == id)) return NotFound();
+
+            var existante = await _context.ValidationsTva
+                .FirstOrDefaultAsync(v => v.ClientId == id && v.Annee == dto.Annee && v.Mois == dto.Mois);
+
+            if (dto.Validee && existante == null)
+            {
+                _context.ValidationsTva.Add(new ValidationTva
+                {
+                    ClientId = id,
+                    Annee = dto.Annee,
+                    Mois = dto.Mois,
+                    DateValidation = DateTime.UtcNow
+                });
+            }
+            else if (!dto.Validee && existante != null)
+            {
+                _context.ValidationsTva.Remove(existante);
+            }
+
             await _context.SaveChangesAsync();
             return NoContent();
         }

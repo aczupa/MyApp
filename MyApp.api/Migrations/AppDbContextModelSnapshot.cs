@@ -276,6 +276,34 @@ namespace MyApp.api.Migrations
                     b.ToTable("Clients");
                 });
 
+            modelBuilder.Entity("MyApp.api.Models.ValidationTva", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Annee")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateValidation")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Mois")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId", "Annee", "Mois")
+                        .IsUnique();
+
+                    b.ToTable("ValidationsTva");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -325,6 +353,17 @@ namespace MyApp.api.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("MyApp.api.Models.ValidationTva", b =>
+                {
+                    b.HasOne("MyApp.api.Models.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
                 });
 #pragma warning restore 612, 618
         }
