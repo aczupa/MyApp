@@ -16,6 +16,7 @@ export class Clients implements OnInit {
   filtreActif = signal(false);
   protected mois = MOIS;
   protected annee = new Date().getFullYear();
+  private filtre: { mois: string; annee: string } | undefined;
 
   constructor(private clientService: ClientService, protected auth: AuthService) { }
 
@@ -25,8 +26,19 @@ export class Clients implements OnInit {
 
   setFiltre(mois: string, annee: string) {
     const actif = !!mois && !!annee;
+    this.filtre = actif ? { mois, annee } : undefined;
     this.filtreActif.set(actif);
-    this.load(actif ? { mois, annee } : undefined);
+    this.load(this.filtre);
+  }
+
+  valider(client: any, validee: boolean) {
+    if (!this.filtre) return;
+
+    this.clientService
+      .setTvaValidation(client.id, +this.filtre.annee, +this.filtre.mois, validee)
+      .subscribe(() => {
+        this.clients.update(list => list.map(c => c.id === client.id ? { ...c, validee } : c));
+      });
   }
 
   delete(id: number) {

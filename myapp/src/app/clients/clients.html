@@ -12,20 +12,27 @@
   </select>
   <input #an type="number" [value]="annee" (change)="setFiltre(mo.value, an.value)" />
 </div>
-
 @if (filtreActif()) {
   <table>
     <tr>
       <th>Dénomination sociale</th>
       <th>TVA</th>
+      <th>Validé</th>
     </tr>
     @for (c of clients(); track c.id) {
       <tr>
         <td><a [routerLink]="['/clients', c.id]">{{ c.denominationSociale }}</a></td>
         <td>{{ c.tva }}</td>
+        <td>
+          @if (auth.isAdmin()) {
+            <input #cb type="checkbox" [checked]="c.validee" (change)="valider(c, cb.checked)" />
+          } @else {
+            {{ c.validee ? 'Validé' : '—' }}
+          }
+        </td>
       </tr>
     } @empty {
-      <tr><td colspan="2">Aucune échéance de TVA pour cette période.</td></tr>
+      <tr><td colspan="3">Aucune échéance de TVA pour cette période.</td></tr>
     }
   </table>
 } @else {

@@ -35,4 +35,8 @@ export class ClientService {
   deleteClient(id: number) {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
+
+  setTvaValidation(id: number, annee: number, mois: number, validee: boolean) {
+    return this.http.put(`${this.apiUrl}/${id}/tva-validation`, { annee, mois, validee });
+  }
 }
