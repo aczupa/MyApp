@@ -29,8 +29,8 @@ export class ClientService {
   updateClient(id: number, client: object) {
     return this.http.put(`${this.apiUrl}/${id}`, client);
   }
-  getClient(id: number) {
-    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  getClient(id: number, annee?: number) {
+    return this.http.get<any>(`${this.apiUrl}/${id}`, { params: annee ? { annee } : undefined });
   }
   deleteClient(id: number) {
     return this.http.delete(`${this.apiUrl}/${id}`);

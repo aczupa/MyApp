@@ -6,6 +6,17 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+.filtre {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+tr.valide td {
+  background-color: #e6f4ea;
+}
+
 table {
   box-shadow: none;
   margin: 0;
@@ -97,3 +108,4 @@ table {
     gap: 1rem;
   }
 }
+

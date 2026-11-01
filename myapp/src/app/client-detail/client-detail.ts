@@ -14,7 +14,10 @@ export class ClientDetail implements OnInit {
 
   client = signal<any | null>(null);
   error = signal(false);
+  annee = signal(new Date().getFullYear());
   protected mois = MOIS;
+  private id = 0;
+
   constructor(
     private route: ActivatedRoute,
     private clientService: ClientService,
@@ -22,12 +25,30 @@ export class ClientDetail implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.id = Number(this.route.snapshot.paramMap.get('id'));
+    this.charger();
+  }
 
-    this.clientService.getClient(id).subscribe({
-      next: data => {
-        this.client.set(data);
-      },
+  changerAnnee(value: string) {
+    const annee = Number(value);
+    if (!annee) return;
+
+    this.annee.set(annee);
+    this.charger();
+  }
+
+  valider(mois: number, validee: boolean) {
+    this.clientService.setTvaValidation(this.id, this.annee(), mois, validee).subscribe(() => {
+      this.client.update(c => ({
+        ...c,
+        echeances: c.echeances.map((e: any) => e.mois === mois ? { ...e, validee } : e),
+      }));
+    });
+  }
+
+  private charger() {
+    this.clientService.getClient(this.id, this.annee()).subscribe({
+      next: data => this.client.set(data),
       error: err => {
         console.error('Erreur lors du chargement du client', err);
         this.error.set(true);
