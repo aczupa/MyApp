@@ -1,5 +1,82 @@
+:host {
+  display: block;
+  padding: 1.5rem;
+}
+
+@media (max-width: 576px) {
+  :host {
+    padding: 1rem;
+  }
+}
+
+.barre {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
 .filtre {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
   margin: 1rem 0;
+
+  select,
+  input {
+    padding: 8px 16px;
+    font-family: inherit;
+    font-size: 1rem;
+    color: var(--lc-navy);
+    background: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 25px;
+
+    &:focus {
+      outline: none;
+      border-color: var(--lc-navy);
+      box-shadow: 0 0 0 0.2rem rgba(7, 45, 79, 0.2);
+    }
+  }
+
+  select {
+    flex: 1 1 10rem;
+    max-width: 16rem;
+  }
+
+  input {
+    flex: 0 0 auto;
+    width: 6rem;
+  }
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+td input[type='checkbox'] {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--lc-navy);
+  cursor: pointer;
+}
+
+.titre-page {
+  margin: 1.5rem 0 2rem;
+  font-size: 1.8rem;
+  letter-spacing: 2px;
+  text-align: center;
+
+  &::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 2px;
+    margin: 0.75rem auto 0;
+    background-color: var(--lc-navy);
+  }
 }

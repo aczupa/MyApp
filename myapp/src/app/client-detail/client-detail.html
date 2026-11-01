@@ -1,4 +1,4 @@
-<h2>Client</h2>
+<h2 class="titre-page">Client</h2>
 
 @if (client(); as c) {
 
@@ -68,6 +68,7 @@
       <label for="annee">Année</label>
       <input #an id="annee" type="number" [value]="annee()" (change)="changerAnnee(an.value)" />
     </div>
+    <div class="table-wrap">
 
     <table>
       <tr>
@@ -97,6 +98,7 @@
         </tr>
       }
     </table>
+    </div>
   }
 </div>
 
