@@ -69,3 +69,19 @@ table {
   }
 
 }
+
+.titre-page {
+  margin: 1.5rem 0 2rem;
+  font-size: 1.8rem;
+  letter-spacing: 2px;
+  text-align: center;
+
+  &::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 2px;
+    margin: 0.75rem auto 0;
+    background-color: var(--lc-navy);
+  }
+}

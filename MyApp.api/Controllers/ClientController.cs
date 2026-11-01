@@ -107,10 +107,17 @@ namespace MyApp.api.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetClientById(int id)
+        public async Task<IActionResult> GetClientById(int id, int? annee)
         {
             var c = await _context.Clients.FindAsync(id);
             if (c == null) return NotFound();
+
+            var an = annee is >= 2000 and <= 2100 ? annee.Value : DateTime.Today.Year;
+
+            var validees = (await _context.ValidationsTva
+                .Where(v => v.ClientId == id && v.Annee == an)
+                .Select(v => v.Mois)
+                .ToListAsync()).ToHashSet();
 
             return Ok(new
             {
@@ -128,7 +135,12 @@ namespace MyApp.api.Controllers
                 PeriodiciteTva = c.PeriodiciteTva.ToString(),
                 PeriodiciteTvaLabel = c.PeriodiciteTva.GetDisplayName(),
                 c.JourTva,
-                Echeances = Enumerable.Range(1, 12).Select(m => new { mois = m, jour = c.GetJourTva(m) })
+                Annee = an,
+                Echeances = Enumerable.Range(1, 12).Select(m =>
+                {
+                    var jour = c.GetJourTva(m);
+                    return new { mois = m, jour, validee = jour != null && validees.Contains(m) };
+                })
             });
         }
 
