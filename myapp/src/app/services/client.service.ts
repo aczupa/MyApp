@@ -39,4 +39,9 @@ export class ClientService {
   setTvaValidation(id: number, annee: number, mois: number, validee: boolean) {
     return this.http.put(`${this.apiUrl}/${id}/tva-validation`, { annee, mois, validee });
   }
+  private coworkerUrl = 'http://localhost:5115/api/coworker';
+
+  getCoworkers() {
+    return this.http.get<{ id: number; nom: string; nbClients: number }[]>(this.coworkerUrl);
+  }
 }

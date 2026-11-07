@@ -79,6 +79,16 @@
       <div class="error">{{ error() }}</div>
     }
 
+    <div class="field">
+  <select id="coworker" name="coworker" [(ngModel)]="model.coworkerId">
+    <option [ngValue]="null">Non attribué</option>
+    @for (w of coworkers(); track w.id) {
+      <option [ngValue]="w.id">{{ w.nom }}</option>
+    }
+  </select>
+  <label for="coworker">Coworker</label>
+</div>
+
     <button type="submit">Enregistrer</button>
   </form>
 

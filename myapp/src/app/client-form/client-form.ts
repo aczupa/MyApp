@@ -22,6 +22,7 @@ export class ClientForm implements OnInit {
     representantLegal: '',
     periodiciteTva: 'NonConcerne',
     jourTva: null as number | null,
+    coworkerId: null as number | null,
   };
 
   id: number | null = null;
@@ -29,6 +30,7 @@ export class ClientForm implements OnInit {
   periodicites = signal<{ value: string; label: string }[]>([]);
   jours = [19, 20, 21, 24, 25];
   error = signal('');
+  coworkers = signal<{ id: number; nom: string }[]>([]);
 
   constructor(
     private clientService: ClientService,
@@ -40,6 +42,7 @@ export class ClientForm implements OnInit {
   ngOnInit() {
     this.clientService.getFormesJuridiques().subscribe(f => this.formes.set(f));
     this.clientService.getPeriodicitesTva().subscribe(p => this.periodicites.set(p));
+    this.clientService.getCoworkers().subscribe(w => this.coworkers.set(w));
 
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
