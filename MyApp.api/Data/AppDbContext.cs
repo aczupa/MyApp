@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using MyApp.api.Models;
+using System.Security.Claims;
 
 namespace MyApp.api.Data
 {
@@ -11,6 +12,7 @@ namespace MyApp.api.Data
 
         public DbSet<Client> Clients { get; set; }
         public DbSet<ValidationTva> ValidationsTva { get; set; }
+        public DbSet<Coworker> Coworkers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -27,6 +29,15 @@ namespace MyApp.api.Data
             builder.Entity<ValidationTva>()
     .HasIndex(v => new { v.ClientId, v.Annee, v.Mois })
     .IsUnique();
+            builder.Entity<Coworker>()
+    .HasIndex(c => c.UserId)
+    .IsUnique();
+
+            builder.Entity<Client>()
+    .HasOne(c => c.Coworker)
+    .WithMany(w => w.Clients)
+    .HasForeignKey(c => c.CoworkerId)
+    .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

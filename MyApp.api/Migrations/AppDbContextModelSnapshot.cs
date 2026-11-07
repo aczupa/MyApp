@@ -236,6 +236,9 @@ namespace MyApp.api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("CoworkerId")
+                        .HasColumnType("int");
+
                     b.Property<string>("DenominationSociale")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -273,7 +276,33 @@ namespace MyApp.api.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CoworkerId");
+
                     b.ToTable("Clients");
+                });
+
+            modelBuilder.Entity("MyApp.api.Models.Coworker", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Nom")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Coworkers");
                 });
 
             modelBuilder.Entity("MyApp.api.Models.ValidationTva", b =>
@@ -355,6 +384,27 @@ namespace MyApp.api.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MyApp.api.Models.Client", b =>
+                {
+                    b.HasOne("MyApp.api.Models.Coworker", "Coworker")
+                        .WithMany("Clients")
+                        .HasForeignKey("CoworkerId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Coworker");
+                });
+
+            modelBuilder.Entity("MyApp.api.Models.Coworker", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("MyApp.api.Models.ValidationTva", b =>
                 {
                     b.HasOne("MyApp.api.Models.Client", "Client")
@@ -364,6 +414,11 @@ namespace MyApp.api.Migrations
                         .IsRequired();
 
                     b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("MyApp.api.Models.Coworker", b =>
+                {
+                    b.Navigation("Clients");
                 });
 #pragma warning restore 612, 618
         }

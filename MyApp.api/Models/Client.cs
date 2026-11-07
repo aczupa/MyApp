@@ -24,5 +24,7 @@
             PeriodiciteTva.Trimestrielle => MoisTrimestriel.Contains(mois) ? JourTva : null,
             _ => null
         };
+        public int? CoworkerId { get; set; }
+        public Coworker? Coworker { get; set; }
     }
 }

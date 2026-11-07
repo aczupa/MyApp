@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using MyApp.api.Data;
 using MyApp.api.Models;
 using MyApp.api.Models.DTOs;
+using System.Security.Claims;
 
 namespace MyApp.api.Controllers
 {
@@ -22,8 +23,10 @@ namespace MyApp.api.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(int? annee, int? mois)
         {
-            var clients = await _context.Clients.ToListAsync();
+            var clients = await _context.Clients.Include(c => c.Coworker).ToListAsync();
             var filtre = annee is not null && mois is >= 1 and <= 12;
+            var admin = User.IsInRole("Admin");
+            var moi = await CoworkerIdCourantAsync();
 
             if (filtre)
             {
@@ -34,11 +37,12 @@ namespace MyApp.api.Controllers
             }
 
             var validees = filtre
-    ? (await _context.ValidationsTva
-        .Where(v => v.Annee == annee && v.Mois == mois)
-        .Select(v => v.ClientId)
-        .ToListAsync()).ToHashSet()
-    : new HashSet<int>();
+                ? (await _context.ValidationsTva
+                    .Where(v => v.Annee == annee && v.Mois == mois)
+                    .Select(v => v.ClientId)
+                    .ToListAsync()).ToHashSet()
+                : new HashSet<int>();
+
             string Tva(Client c)
             {
                 if (c.PeriodiciteTva == PeriodiciteTva.NonConcerne)
@@ -63,10 +67,12 @@ namespace MyApp.api.Controllers
                 c.Telephone,
                 c.Email,
                 c.RepresentantLegal,
-                Tva = Tva(c)
+                Coworker = c.Coworker?.Nom,
+                Tva = Tva(c),
+                Validee = validees.Contains(c.Id),
+                PeutValider = admin || (c.CoworkerId != null && c.CoworkerId == moi)
             }));
         }
-
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(CreateClientDto dto)
@@ -83,7 +89,8 @@ namespace MyApp.api.Controllers
                 Email = dto.Email,
                 RepresentantLegal = dto.RepresentantLegal,
                 PeriodiciteTva = dto.PeriodiciteTva,
-                JourTva = dto.JourTva
+                JourTva = dto.JourTva,
+                CoworkerId = dto.CoworkerId
             };
 
             _context.Clients.Add(client);
@@ -109,10 +116,11 @@ namespace MyApp.api.Controllers
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetClientById(int id, int? annee)
         {
-            var c = await _context.Clients.FindAsync(id);
+            var c = await _context.Clients.Include(x => x.Coworker).FirstOrDefaultAsync(x => x.Id == id);
             if (c == null) return NotFound();
 
             var an = annee is >= 2000 and <= 2100 ? annee.Value : DateTime.Today.Year;
+            var peutValider = await PeutValiderAsync(c);
 
             var validees = (await _context.ValidationsTva
                 .Where(v => v.ClientId == id && v.Annee == an)
@@ -135,6 +143,9 @@ namespace MyApp.api.Controllers
                 PeriodiciteTva = c.PeriodiciteTva.ToString(),
                 PeriodiciteTvaLabel = c.PeriodiciteTva.GetDisplayName(),
                 c.JourTva,
+                c.CoworkerId,
+                CoworkerNom = c.Coworker?.Nom,
+                PeutValider = peutValider,
                 Annee = an,
                 Echeances = Enumerable.Range(1, 12).Select(m =>
                 {
@@ -143,7 +154,6 @@ namespace MyApp.api.Controllers
                 })
             });
         }
-
         [HttpPut("{id:int}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateClient(int id, CreateClientDto dto)
@@ -162,6 +172,7 @@ namespace MyApp.api.Controllers
             client.RepresentantLegal = dto.RepresentantLegal;
             client.PeriodiciteTva = dto.PeriodiciteTva;
             client.JourTva = dto.JourTva;
+            client.CoworkerId = dto.CoworkerId;
 
             await _context.SaveChangesAsync();
             return NoContent();
@@ -180,10 +191,13 @@ namespace MyApp.api.Controllers
         }
 
         [HttpPut("{id:int}/tva-validation")]
-        
         public async Task<IActionResult> SetTvaValidation(int id, ValidationTvaDto dto)
         {
-            if (!await _context.Clients.AnyAsync(c => c.Id == id)) return NotFound();
+            var client = await _context.Clients.FindAsync(id);
+            if (client == null) return NotFound();
+
+            if (!await PeutValiderAsync(client))
+                return StatusCode(StatusCodes.Status403Forbidden);
 
             var existante = await _context.ValidationsTva
                 .FirstOrDefaultAsync(v => v.ClientId == id && v.Annee == dto.Annee && v.Mois == dto.Mois);
@@ -205,6 +219,22 @@ namespace MyApp.api.Controllers
 
             await _context.SaveChangesAsync();
             return NoContent();
+        }
+
+        private async Task<int?> CoworkerIdCourantAsync()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            return await _context.Coworkers
+                .Where(w => w.UserId == userId)
+                .Select(w => (int?)w.Id)
+                .FirstOrDefaultAsync();
+        }
+
+        private async Task<bool> PeutValiderAsync(Client c)
+        {
+            if (User.IsInRole("Admin")) return true;
+            return c.CoworkerId != null && c.CoworkerId == await CoworkerIdCourantAsync();
         }
     }
 }

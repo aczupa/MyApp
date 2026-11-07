@@ -14,6 +14,7 @@ namespace MyApp.api.Models.DTOs
         public string Telephone { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string RepresentantLegal { get; set; } = string.Empty;
+        public int? CoworkerId { get; set; }
 
         public PeriodiciteTva PeriodiciteTva { get; set; }
 
