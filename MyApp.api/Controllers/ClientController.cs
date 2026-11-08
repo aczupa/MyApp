@@ -21,9 +21,12 @@ namespace MyApp.api.Controllers
             _context = context;
         }
         [HttpGet]
-        public async Task<IActionResult> Get(int? annee, int? mois)
+        public async Task<IActionResult> Get(int? annee, int? mois, int? coworkerId)
         {
-            var clients = await _context.Clients.Include(c => c.Coworker).ToListAsync();
+            var clients = await _context.Clients
+                .Include(c => c.Coworker)
+                .Where(c => coworkerId == null || c.CoworkerId == coworkerId)
+                .ToListAsync();
             var filtre = annee is not null && mois is >= 1 and <= 12;
             var admin = User.IsInRole("Admin");
             var moi = await CoworkerIdCourantAsync();
@@ -67,6 +70,7 @@ namespace MyApp.api.Controllers
                 c.Telephone,
                 c.Email,
                 c.RepresentantLegal,
+                c.CoworkerId,
                 Coworker = c.Coworker?.Nom,
                 Tva = Tva(c),
                 Validee = validees.Contains(c.Id),

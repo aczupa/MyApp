@@ -112,9 +112,14 @@
 
        <div class="client-field">
   <label>Coworker</label>
-  <div>{{ c.coworkerNom || '—' }}</div>
+  <div>
+    @if (c.coworkerNom) {
+      <a [routerLink]="['/clients']" [queryParams]="{ coworker: c.coworkerId }">{{ c.coworkerNom }}</a>
+    } @else {
+      —
+    }
+  </div>
 </div>
-
 
       @if (auth.isAdmin()) {
         <button [routerLink]="['/clients', c.id, 'edit']">

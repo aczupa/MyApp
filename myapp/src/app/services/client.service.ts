@@ -10,8 +10,9 @@ export class ClientService {
 
   constructor(private http: HttpClient) { }
 
-  getClients(filtre?: { mois: string; annee: string }) {
-    return this.http.get(this.apiUrl, { params: filtre });
+
+  getClients(params?: Record<string, string>) {
+    return this.http.get(this.apiUrl, { params });
   }
 
   getFormesJuridiques() {

@@ -5,7 +5,7 @@ using MyApp.api.Data;
 
 namespace MyApp.api.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CoworkerController : ControllerBase
