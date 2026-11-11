@@ -1,99 +1,196 @@
+
 <div class="barre">
   <div>
     @if (auth.isAdmin()) {
       <button routerLink="/clients/new">Ajouter un client</button>
     }
   </div>
+
   <app-logout-button />
 </div>
 
 <h2 class="titre-page">Clients</h2>
 
+<!-- Filtres -->
 <div class="filtre">
+
   <select #co (change)="setCoworker(co.value)">
     <option value="">Tous les coworkers</option>
+
     @for (w of coworkers(); track w.id) {
-      <option [value]="w.id" [selected]="w.id.toString() === coworkerId()">{{ w.nom }}</option>
+      <option
+        [value]="w.id"
+        [selected]="w.id.toString() === coworkerId()"
+      >
+        {{ w.nom }}
+      </option>
     }
   </select>
 
   <select #mo (change)="setFiltre(mo.value, an.value)">
     <option value="">Tous les mois</option>
+
     @for (m of mois; track $index) {
       <option [value]="$index + 1">{{ m }}</option>
     }
   </select>
 
-  <input #an type="number" [value]="annee" (change)="setFiltre(mo.value, an.value)" />
+  <input
+    #an
+    type="number"
+    [value]="annee"
+    (change)="setFiltre(mo.value, an.value)"
+  />
+
 </div>
 
+<!-- Vue des échéances TVA -->
 @if (filtreActif()) {
+
   <table>
-    <tr>
-      <th>Dénomination sociale</th>
-      <th>TVA</th>
-      <th>Validé</th>
-    </tr>
-    @for (c of clients(); track c.id) {
+    <thead>
       <tr>
-        <td><a [routerLink]="['/clients', c.id]">{{ c.denominationSociale }}</a></td>
-        <td>{{ c.tva }}</td>
-        <td>
-          @if (c.peutValider) {
-            <input #cb type="checkbox" [checked]="c.validee" (change)="valider(c, cb.checked)" />
-          } @else {
-            {{ c.validee ? 'Validé' : '—' }}
-          }
-        </td>
+        <th>Dénomination sociale</th>
+        <th>TVA</th>
+        <th>Validé</th>
       </tr>
-    } @empty {
-      <tr><td colspan="3">Aucune échéance de TVA pour cette période.</td></tr>
-    }
-  </table>
-} @else {
-  <table>
-    <tr>
-      <th>N°</th>
-      <th>Dénomination sociale</th>
-      <th>Forme juridique</th>
-      <th>TVA</th>
-      <th>Ville</th>
-      <th>Pays</th>
-      <th>Téléphone</th>
-      <th>Email</th>
-      <th>Coworker</th>
-      @if (auth.isAdmin()) {
-        <th></th>
-      }
-    </tr>
-    @for (c of clients(); track c.id) {
-      <tr>
-        <td>{{ $index + 1 }}</td>
-        <td><a [routerLink]="['/clients', c.id]">{{ c.denominationSociale }}</a></td>
-        <td>{{ c.formeJuridique }}</td>
-        <td>{{ c.tva }}</td>
-        <td>{{ c.ville }}</td>
-        <td>{{ c.pays }}</td>
-        <td>{{ c.telephone }}</td>
-        <td>{{ c.email }}</td>
-        <td>
-          @if (c.coworker) {
-            <a [routerLink]="['/clients']" [queryParams]="{ coworker: c.coworkerId }">{{ c.coworker }}</a>
-          } @else {
-            —
-          }
-        </td>
-        @if (auth.isAdmin()) {
+    </thead>
+
+    <tbody>
+      @for (c of clients(); track c.id) {
+        <tr>
           <td>
-            <div class="actions">
-              <button [routerLink]="['/clients', c.id, 'edit']">Modifier</button>
-              <button (click)="delete(c.id)">Supprimer</button>
-            </div>
+            <a [routerLink]="['/clients', c.id]">
+              {{ c.denominationSociale }}
+            </a>
           </td>
+
+          <td>{{ c.tva }}</td>
+
+          <td>
+            @if (c.peutValider) {
+              <input
+                #cb
+                type="checkbox"
+                [checked]="c.validee"
+                (change)="valider(c, cb.checked)"
+              />
+            } @else {
+              {{ c.validee ? 'Validé' : '—' }}
+            }
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="3">
+            Aucune échéance de TVA pour cette période.
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+} @else {
+
+  <!-- Liste complète des clients -->
+  <table>
+    <thead>
+      <tr>
+        <th>N°</th>
+        <th>Dénomination sociale</th>
+        <th>Forme juridique</th>
+        <th>Mode d'imposition</th>
+        <th>Régime fiscal</th>
+        <th>TVA</th>
+        <th>Ville</th>
+        <th>Pays</th>
+        <th>Téléphone</th>
+        <th>Email</th>
+        <th>Coworker</th>
+
+        @if (auth.isAdmin()) {
+          <th></th>
         }
       </tr>
-    } @empty {
-      <tr><td colspan="10">Aucun client.</td></tr>
-    }
+    </thead>
+
+    <tbody>
+      @for (c of clients(); track c.id) {
+
+        <tr>
+          <td>{{ $index + 1 }}</td>
+
+          <td>
+            <a [routerLink]="['/clients', c.id]">
+              {{ c.denominationSociale }}
+            </a>
+          </td>
+
+          <td>{{ c.formeJuridique }}</td>
+
+          <td>{{ c.modeImpositionLabel || '—' }}</td>
+
+          <td>
+            @if (c.regimeFiscal !== 'NonRenseigne') {
+              {{ c.regimeFiscalLabel || '—' }}
+            } @else {
+              —
+            }
+          </td>
+
+          <td>{{ c.tva }}</td>
+
+          <td>{{ c.ville }}</td>
+
+          <td>{{ c.pays }}</td>
+
+          <td>{{ c.telephone }}</td>
+
+          <td>{{ c.email }}</td>
+
+          <td>
+            @if (c.coworker) {
+              <a
+                [routerLink]="['/clients']"
+                [queryParams]="{ coworker: c.coworkerId }"
+              >
+                {{ c.coworker }}
+              </a>
+            } @else {
+              —
+            }
+          </td>
+
+          @if (auth.isAdmin()) {
+            <td>
+              <div class="actions">
+
+                <button
+                  [routerLink]="['/clients', c.id, 'edit']"
+                >
+                  Modifier
+                </button>
+
+                <button (click)="delete(c.id)">
+                  Supprimer
+                </button>
+
+              </div>
+            </td>
+          }
+
+        </tr>
+
+      } @empty {
+
+        <tr>
+          <td [attr.colspan]="auth.isAdmin() ? 12 : 11">
+            Aucun client.
+          </td>
+        </tr>
+
+      }
+    </tbody>
   </table>
+
 }

@@ -26,5 +26,8 @@
         };
         public int? CoworkerId { get; set; }
         public Coworker? Coworker { get; set; }
+
+        public ModeImposition ModeImposition { get; set; }
+        public RegimeFiscal RegimeFiscal { get; set; }
     }
 }

@@ -38,6 +38,14 @@ namespace MyApp.api.Data
     .WithMany(w => w.Clients)
     .HasForeignKey(c => c.CoworkerId)
     .OnDelete(DeleteBehavior.SetNull);
+
+            builder.Entity<Client>()
+    .Property(c => c.ModeImposition)
+    .HasConversion<string>();
+
+            builder.Entity<Client>()
+                .Property(c => c.RegimeFiscal)
+                .HasConversion<string>();
         }
     }
 }

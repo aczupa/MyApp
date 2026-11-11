@@ -16,7 +16,14 @@ export class ClientService {
   }
 
   getFormesJuridiques() {
-    return this.http.get<{ value: string; label: string }[]>(`${this.apiUrl}/formes-juridiques`);
+    return this.http.get<{ value: string; label: string; monaco: boolean }[]>(`${this.apiUrl}/formes-juridiques`);
+  }
+
+  getRegimesFiscaux() {
+    return this.http.get<{
+      modes: { value: string; label: string; systeme: string | null }[];
+      regimes: { value: string; label: string }[];
+    }>(`${this.apiUrl}/regimes-fiscaux`);
   }
 
   getPeriodicitesTva() {

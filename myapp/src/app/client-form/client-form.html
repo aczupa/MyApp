@@ -1,96 +1,244 @@
+
 <div class="login-card">
- <h2>{{ id !== null ? 'Modifier le client' : 'Ajouter un client' }}</h2>
+
+  <h2>
+    {{ id !== null ? 'Modifier le client' : 'Ajouter un client' }}
+  </h2>
 
   <form (ngSubmit)="save()">
+
+    <!-- Dénomination sociale -->
     <div class="field">
-      <input type="text" id="denominationSociale" name="denominationSociale" placeholder=" "
-             [(ngModel)]="model.denominationSociale" required />
+      <input
+        type="text"
+        id="denominationSociale"
+        name="denominationSociale"
+        placeholder=" "
+        [(ngModel)]="model.denominationSociale"
+        required
+      />
       <label for="denominationSociale">Dénomination sociale</label>
     </div>
 
+    <!-- Forme juridique -->
     <div class="field">
-      <select id="forme" name="forme" [(ngModel)]="model.formeJuridique" required>
+      <select
+        id="forme"
+        name="forme"
+        [ngModel]="model.formeJuridique"
+        (ngModelChange)="changerForme($event)"
+        required
+      >
         <option value="" disabled>Choisir…</option>
+
         @for (f of formes(); track f.value) {
           <option [value]="f.value">{{ f.label }}</option>
         }
       </select>
+
       <label for="forme">Forme juridique</label>
     </div>
 
-        <div class="field">
-      <select id="periodiciteTva" name="periodiciteTva" [(ngModel)]="model.periodiciteTva">
+    <!-- Mode d'imposition -->
+    <div class="field">
+      <select
+        id="modeImposition"
+        name="modeImposition"
+        [(ngModel)]="model.modeImposition"
+      >
+        @for (m of modesDisponibles; track m.value) {
+          <option [value]="m.value">{{ m.label }}</option>
+        }
+      </select>
+
+      <label for="modeImposition">Mode d'imposition</label>
+    </div>
+
+    <!-- Informations fiscales -->
+    @if (monaco) {
+
+      <small class="aide">
+        À Monaco, l'ISB dépend de l'activité (au moins 25 % du
+        chiffre d'affaires réalisé hors de Monaco, ou revenus
+        de brevets, marques et droits d'auteur) :
+        la forme juridique ne suffit pas à le déterminer.
+      </small>
+
+    } @else {
+
+      @if (model.modeImposition === 'IS') {
+        <small class="aide">
+          Option pour l'IR possible sous certaines conditions.
+        </small>
+      }
+
+      <!-- Régime fiscal -->
+      <div class="field">
+        <select
+          id="regimeFiscal"
+          name="regimeFiscal"
+          [(ngModel)]="model.regimeFiscal"
+        >
+          @for (r of regimes(); track r.value) {
+            <option [value]="r.value">{{ r.label }}</option>
+          }
+        </select>
+
+        <label for="regimeFiscal">Régime fiscal</label>
+      </div>
+    }
+
+    <!-- TVA -->
+    <div class="field">
+      <select
+        id="periodiciteTva"
+        name="periodiciteTva"
+        [(ngModel)]="model.periodiciteTva"
+      >
         @for (p of periodicites(); track p.value) {
           <option [value]="p.value">{{ p.label }}</option>
         }
       </select>
+
       <label for="periodiciteTva">TVA</label>
     </div>
 
+    <!-- Jour de déclaration TVA -->
     @if (model.periodiciteTva !== 'NonConcerne') {
+
       <div class="field">
-        <select id="jourTva" name="jourTva" [(ngModel)]="model.jourTva">
+        <select
+          id="jourTva"
+          name="jourTva"
+          [(ngModel)]="model.jourTva"
+        >
           <option [ngValue]="null" disabled>Choisir…</option>
+
           @for (j of jours; track j) {
             <option [ngValue]="j">{{ j }}</option>
           }
         </select>
+
         <label for="jourTva">Jour de déclaration</label>
       </div>
+
     }
 
+    <!-- Adresse -->
     <div class="field">
-      <input type="text" id="adresse" name="adresse" placeholder=" " [(ngModel)]="model.adresse" />
+      <input
+        type="text"
+        id="adresse"
+        name="adresse"
+        placeholder=" "
+        [(ngModel)]="model.adresse"
+      />
       <label for="adresse">Adresse</label>
     </div>
 
+    <!-- Ville -->
     <div class="field">
-      <input type="text" id="ville" name="ville" placeholder=" " [(ngModel)]="model.ville" />
+      <input
+        type="text"
+        id="ville"
+        name="ville"
+        placeholder=" "
+        [(ngModel)]="model.ville"
+      />
       <label for="ville">Ville</label>
     </div>
 
+    <!-- Code postal -->
     <div class="field">
-      <input type="text" id="codePostal" name="codePostal" placeholder=" " [(ngModel)]="model.codePostal" />
+      <input
+        type="text"
+        id="codePostal"
+        name="codePostal"
+        placeholder=" "
+        [(ngModel)]="model.codePostal"
+      />
       <label for="codePostal">Code postal</label>
     </div>
 
+    <!-- Pays -->
     <div class="field">
-      <input type="text" id="pays" name="pays" placeholder=" " [(ngModel)]="model.pays" />
+      <input
+        type="text"
+        id="pays"
+        name="pays"
+        placeholder=" "
+        [(ngModel)]="model.pays"
+      />
       <label for="pays">Pays</label>
     </div>
 
+    <!-- Téléphone -->
     <div class="field">
-      <input type="tel" id="telephone" name="telephone" placeholder=" " [(ngModel)]="model.telephone" />
+      <input
+        type="tel"
+        id="telephone"
+        name="telephone"
+        placeholder=" "
+        [(ngModel)]="model.telephone"
+      />
       <label for="telephone">Téléphone</label>
     </div>
 
+    <!-- Email -->
     <div class="field">
-      <input type="email" id="email" name="email" placeholder=" " [(ngModel)]="model.email" />
+      <input
+        type="email"
+        id="email"
+        name="email"
+        placeholder=" "
+        [(ngModel)]="model.email"
+      />
       <label for="email">E-mail</label>
     </div>
 
+    <!-- Représentant légal -->
     <div class="field">
-      <input type="text" id="representantLegal" name="representantLegal" placeholder=" "
-             [(ngModel)]="model.representantLegal" />
+      <input
+        type="text"
+        id="representantLegal"
+        name="representantLegal"
+        placeholder=" "
+        [(ngModel)]="model.representantLegal"
+      />
       <label for="representantLegal">Représentant légal</label>
     </div>
 
+    <!-- Coworker -->
+    <div class="field">
+      <select
+        id="coworker"
+        name="coworker"
+        [(ngModel)]="model.coworkerId"
+      >
+        <option [ngValue]="null">Non attribué</option>
+
+        @for (w of coworkers(); track w.id) {
+          <option [ngValue]="w.id">{{ w.nom }}</option>
+        }
+      </select>
+
+      <label for="coworker">Coworker</label>
+    </div>
+
+    <!-- Message d'erreur -->
     @if (error()) {
       <div class="error">{{ error() }}</div>
     }
 
-    <div class="field">
-  <select id="coworker" name="coworker" [(ngModel)]="model.coworkerId">
-    <option [ngValue]="null">Non attribué</option>
-    @for (w of coworkers(); track w.id) {
-      <option [ngValue]="w.id">{{ w.nom }}</option>
-    }
-  </select>
-  <label for="coworker">Coworker</label>
-</div>
+    <!-- Bouton -->
+    <button type="submit" [disabled]="loading()">
+      {{ loading() ? 'Enregistrement...' : 'Enregistrer' }}
+    </button>
 
-    <button type="submit">Enregistrer</button>
   </form>
 
-  <p class="link"><a routerLink="/clients">Retour à la liste</a></p>
+  <p class="link">
+    <a routerLink="/clients">Retour à la liste</a>
+  </p>
+
 </div>

@@ -254,11 +254,19 @@ namespace MyApp.api.Migrations
                     b.Property<int?>("JourTva")
                         .HasColumnType("int");
 
+                    b.Property<string>("ModeImposition")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Pays")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PeriodiciteTva")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegimeFiscal")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

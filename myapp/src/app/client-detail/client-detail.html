@@ -1,15 +1,17 @@
+
 <h2 class="titre-page">Client</h2>
 
 @if (client(); as c) {
 
   <div class="client-card">
 
+    <!-- En-tête -->
     <div class="client-header">
       <h3>{{ c.denominationSociale }}</h3>
-
       <span>{{ c.formeJuridiqueLabel }}</span>
     </div>
 
+    <!-- Informations générales -->
     <div class="client-section">
       <h4>Informations générales</h4>
 
@@ -17,28 +19,28 @@
 
         <div class="client-field">
           <label>Adresse</label>
-          <div>{{ c.adresse }}</div>
+          <div>{{ c.adresse || '—' }}</div>
         </div>
 
         <div class="client-field">
           <label>Code postal</label>
-          <div>{{ c.codePostal }}</div>
+          <div>{{ c.codePostal || '—' }}</div>
         </div>
 
         <div class="client-field">
           <label>Ville</label>
-          <div>{{ c.ville }}</div>
+          <div>{{ c.ville || '—' }}</div>
         </div>
 
         <div class="client-field">
           <label>Pays</label>
-          <div>{{ c.pays }}</div>
+          <div>{{ c.pays || '—' }}</div>
         </div>
 
-       
       </div>
     </div>
 
+    <!-- Contact -->
     <div class="client-section">
       <h4>Contact</h4>
 
@@ -46,63 +48,168 @@
 
         <div class="client-field">
           <label>Téléphone</label>
-          <div>{{ c.telephone }}</div>
+          <div>{{ c.telephone || '—' }}</div>
         </div>
 
         <div class="client-field">
           <label>Email</label>
-          <div>{{ c.email }}</div>
+          <div>{{ c.email || '—' }}</div>
         </div>
 
         <div class="client-field">
           <label>Représentant légal</label>
-          <div>{{ c.representantLegal }}</div>
+          <div>{{ c.representantLegal || '—' }}</div>
         </div>
 
       </div>
     </div>
-<div class="client-section">
-  <h4>TVA : {{ c.periodiciteTvaLabel }}</h4>
 
-  @if (c.periodiciteTva !== 'NonConcerne') {
-    <div class="filtre">
-      <label for="annee">Année</label>
-      <input #an id="annee" type="number" [value]="annee()" (change)="changerAnnee(an.value)" />
+    <!-- Informations fiscales -->
+    <div class="client-section">
+      <h4>Informations fiscales</h4>
+
+      <div class="client-grid">
+
+        <div class="client-field">
+          <label>Mode d'imposition</label>
+          <div>{{ c.modeImpositionLabel || '—' }}</div>
+        </div>
+
+        @if (c.regimeFiscal !== 'NonRenseigne') {
+
+          <div class="client-field">
+            <label>Régime fiscal</label>
+            <div>{{ c.regimeFiscalLabel || '—' }}</div>
+          </div>
+
+        }
+
+      </div>
     </div>
-    <div class="table-wrap">
 
-    <table>
-      <tr>
-        <th>Mois</th>
-        <th>Échéance</th>
-        <th>Statut</th>
-      </tr>
-      @for (e of c.echeances; track e.mois) {
-        <tr [class.valide]="e.validee">
-          <td>{{ mois[e.mois - 1] }}</td>
-          @if (e.jour) {
-            <td>{{ e.jour }} {{ mois[e.mois - 1] }}</td>
-           <td>
-  @if (c.peutValider) {
-    <label>
-      <input #cb type="checkbox" [checked]="e.validee" (change)="valider(e.mois, cb.checked)" />
-      {{ e.validee ? 'Validé' : 'À valider' }}
-    </label>
-  } @else {
-    {{ e.validee ? 'Validé' : 'À valider' }}
-  }
-</td>
-          } @else {
-            <td>Non concerné</td>
-            <td>—</td>
-          }
-        </tr>
+    <!-- TVA -->
+    <div class="client-section">
+
+      <h4>TVA : {{ c.periodiciteTvaLabel }}</h4>
+
+      @if (c.periodiciteTva !== 'NonConcerne') {
+
+        <!-- Sélection de l'année -->
+        <div class="filtre">
+          <label for="annee">Année</label>
+
+          <input
+            #an
+            id="annee"
+            type="number"
+            min="2000"
+            max="2100"
+            step="1"
+            [value]="annee()"
+            (change)="changerAnnee(an.value)"
+          />
+        </div>
+
+        <!-- Tableau des échéances -->
+        <div class="table-wrap">
+
+          <table>
+
+            <thead>
+              <tr>
+                <th>Mois</th>
+                <th>Échéance</th>
+                <th>Statut</th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+              @for (e of c.echeances; track e.mois) {
+
+                <tr [class.valide]="e.validee">
+
+                  <td>
+                    {{ mois[e.mois - 1] }}
+                  </td>
+
+                  @if (e.jour) {
+
+                    <td>
+                      {{ e.jour }} {{ mois[e.mois - 1] }}
+                    </td>
+
+                    <td>
+
+                      @if (c.peutValider) {
+
+                        <label>
+                          <input
+                            #cb
+                            type="checkbox"
+                            [checked]="e.validee"
+                            (change)="valider(e.mois, cb.checked)"
+                          />
+
+                          {{ e.validee ? 'Validé' : 'À valider' }}
+                        </label>
+
+                      } @else {
+
+                        {{ e.validee ? 'Validé' : 'À valider' }}
+
+                      }
+
+                    </td>
+
+                  } @else {
+
+                    <td>Non concerné</td>
+                    <td>—</td>
+
+                  }
+
+                </tr>
+
+              }
+
+            </tbody>
+
+          </table>
+
+        </div>
+
       }
-    </table>
-    </div>
-  }
-</div>
 
+    </div>
+
+    <!-- Coworker -->
+    <div class="client-section">
+      <h4>Attribution</h4>
+
+      <div class="client-field">
+        <label>Coworker</label>
+
+        <div>
+          @if (c.coworkerNom) {
+
+            <a
+              [routerLink]="['/clients']"
+              [queryParams]="{ coworker: c.coworkerId }"
+            >
+              {{ c.coworkerNom }}
+            </a>
+
+          } @else {
+
+            —
+
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
     <div class="client-actions">
 
       <a routerLink="/clients" class="back-link">
@@ -110,22 +217,16 @@
         Retour aux clients
       </a>
 
-       <div class="client-field">
-  <label>Coworker</label>
-  <div>
-    @if (c.coworkerNom) {
-      <a [routerLink]="['/clients']" [queryParams]="{ coworker: c.coworkerId }">{{ c.coworkerNom }}</a>
-    } @else {
-      —
-    }
-  </div>
-</div>
-
       @if (auth.isAdmin()) {
-        <button [routerLink]="['/clients', c.id, 'edit']">
+
+        <button
+          type="button"
+          [routerLink]="['/clients', c.id, 'edit']"
+        >
           <i class="bi bi-pencil"></i>
           Modifier
         </button>
+
       }
 
     </div>
@@ -133,7 +234,11 @@
   </div>
 
 } @else if (error()) {
-  <p>Client introuvable.</p>
+
+  <p class="error">{{ error() }}</p>
+
 } @else {
+
   <p>Chargement du client...</p>
+
 }
