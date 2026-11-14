@@ -22,8 +22,7 @@ namespace MyApp.api.Controllers
             _context = context;
         }
 
-        // GET : api/client
-        // Liste des clients avec les informations fiscales et la TVA
+      
         [HttpGet]
         public async Task<IActionResult> Get(
             int? annee,
@@ -104,8 +103,7 @@ namespace MyApp.api.Controllers
             }));
         }
 
-        // POST : api/client
-        // Création d'un client
+       
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(CreateClientDto dto)
@@ -138,8 +136,7 @@ namespace MyApp.api.Controllers
             return Ok(new { client.Id });
         }
 
-        // GET : api/client/formes-juridiques
-        // Liste des formes juridiques
+      
         [HttpGet("formes-juridiques")]
         public IActionResult GetFormesJuridiques()
         {
@@ -154,8 +151,7 @@ namespace MyApp.api.Controllers
             );
         }
 
-        // GET : api/client/regimes-fiscaux
-        // Liste des modes d'imposition et des régimes fiscaux
+     
         [HttpGet("regimes-fiscaux")]
         public IActionResult GetRegimesFiscaux()
         {
@@ -184,8 +180,7 @@ namespace MyApp.api.Controllers
             });
         }
 
-        // GET : api/client/periodicites-tva
-        // Liste des périodicités de TVA
+    
         [HttpGet("periodicites-tva")]
         public IActionResult GetPeriodicitesTva()
         {
@@ -199,8 +194,6 @@ namespace MyApp.api.Controllers
             );
         }
 
-        // GET : api/client/{id}
-        // Détails d'un client
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetClientById(int id, int? annee)
         {
@@ -239,7 +232,6 @@ namespace MyApp.api.Controllers
                 c.Email,
                 c.RepresentantLegal,
 
-                // Informations fiscales
                 ModeImposition = c.ModeImposition.ToString(),
                 ModeImpositionLabel = c.ModeImposition.GetDisplayName(),
 
@@ -271,8 +263,7 @@ namespace MyApp.api.Controllers
             });
         }
 
-        // PUT : api/client/{id}
-        // Modification d'un client
+      
         [HttpPut("{id:int}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateClient(int id, CreateClientDto dto)
@@ -305,8 +296,6 @@ namespace MyApp.api.Controllers
             return NoContent();
         }
 
-        // DELETE : api/client/{id}
-        // Suppression d'un client
         [HttpDelete("{id:int}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteClient(int id)
@@ -323,8 +312,7 @@ namespace MyApp.api.Controllers
             return NoContent();
         }
 
-        // PUT : api/client/{id}/tva-validation
-        // Validation ou annulation de la validation d'une TVA
+   
         [HttpPut("{id:int}/tva-validation")]
         public async Task<IActionResult> SetTvaValidation(
             int id,
@@ -365,7 +353,7 @@ namespace MyApp.api.Controllers
             return NoContent();
         }
 
-        // Récupération de l'identifiant du coworker connecté
+       
         private async Task<int?> CoworkerIdCourantAsync()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -376,7 +364,6 @@ namespace MyApp.api.Controllers
                 .FirstOrDefaultAsync();
         }
 
-        // Vérification des droits de validation de TVA
         private async Task<bool> PeutValiderAsync(Client c)
         {
             if (User.IsInRole("Admin"))
