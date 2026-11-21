@@ -52,4 +52,8 @@ export class ClientService {
   getCoworkers() {
     return this.http.get<{ id: number; nom: string; nbClients: number }[]>(this.coworkerUrl);
   }
+
+  getCoworker(id: number) {
+    return this.http.get<any>(`${this.coworkerUrl}/${id}`);
+  }
 }

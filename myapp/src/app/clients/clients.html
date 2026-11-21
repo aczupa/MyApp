@@ -1,11 +1,11 @@
 
 <div class="barre">
-  <div>
+  <div class="gauche">
     @if (auth.isAdmin()) {
       <button routerLink="/clients/new">Ajouter un client</button>
     }
+    <button routerLink="/coworkers">Coworkers</button>
   </div>
-
   <app-logout-button />
 </div>
 

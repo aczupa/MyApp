@@ -1,0 +1,23 @@
+<div class="barre">
+  <button routerLink="/clients">Clients</button>
+  <app-logout-button />
+</div>
+
+<h2 class="titre-page">Coworkers</h2>
+
+<table>
+  <tr>
+    <th>N°</th>
+    <th>Nom</th>
+    <th>Clients</th>
+  </tr>
+  @for (w of coworkers(); track w.id) {
+    <tr>
+      <td>{{ $index + 1 }}</td>
+      <td><a [routerLink]="['/coworkers', w.id]">{{ w.nom }}</a></td>
+      <td>{{ w.nbClients }}</td>
+    </tr>
+  } @empty {
+    <tr><td colspan="3">Aucun coworker.</td></tr>
+  }
+</table>

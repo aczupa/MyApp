@@ -1,0 +1,48 @@
+:host {
+  display: block;
+  padding: 1.5rem;
+}
+
+.carte {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  background-color: var(--lc-gray);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.entete {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 1.5rem;
+
+  h3 {
+    margin: 0;
+    color: var(--lc-navy);
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  span {
+    color: #6c757d;
+  }
+}
+
+h4 {
+  color: var(--lc-navy);
+  font-weight: 400;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+a {
+  color: var(--lc-navy);
+}

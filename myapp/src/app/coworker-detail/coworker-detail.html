@@ -1,0 +1,46 @@
+<h2 class="titre-page">Coworker</h2>
+
+@if (coworker(); as w) {
+
+  <div class="carte">
+
+    <div class="entete">
+      <h3>{{ w.nom }}</h3>
+      <span>{{ w.email || '—' }}</span>
+    </div>
+
+    <h4>Portefeuille : {{ w.clients.length }} client(s)</h4>
+
+    <table>
+      <tr>
+        <th>Dénomination sociale</th>
+        <th>Forme juridique</th>
+        <th>Ville</th>
+        <th>TVA</th>
+      </tr>
+      @for (c of w.clients; track c.id) {
+        <tr>
+          <td><a [routerLink]="['/clients', c.id]">{{ c.denominationSociale }}</a></td>
+          <td>{{ c.formeJuridique }}</td>
+          <td>{{ c.ville }}</td>
+          <td>{{ c.tva }}</td>
+        </tr>
+      } @empty {
+        <tr><td colspan="4">Aucun client attribué.</td></tr>
+      }
+    </table>
+
+    <div class="actions">
+      <a routerLink="/coworkers">Retour aux coworkers</a>
+      <button [routerLink]="['/clients']" [queryParams]="{ coworker: w.id }">
+        Voir dans la liste des clients
+      </button>
+    </div>
+
+  </div>
+
+} @else if (error()) {
+  <p>Coworker introuvable.</p>
+} @else {
+  <p>Chargement du coworker...</p>
+}

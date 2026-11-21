@@ -4,7 +4,10 @@ import { Clients } from './clients/clients';
 import { authGuard } from './guards/auth.guard';
 import { adminGuard } from './guards/admin.guard';
 import { Register } from './register/register';
-import { ClientForm } from './client-form/client-form';
+import { ClientForm } from './client-form/client-form'; import { Coworkers } from './coworkers/coworkers';
+import { CoworkerDetail } from './coworker-detail/coworker-detail';
+
+
 
 export const routes: Routes = [
   { path: '', component: Login },
@@ -18,4 +21,6 @@ export const routes: Routes = [
         .then(m => m.ClientDetail)
   },
   { path: 'register', component: Register },
+  { path: 'coworkers', component: Coworkers, canActivate: [authGuard] },
+  { path: 'coworkers/:id', component: CoworkerDetail, canActivate: [authGuard] },
 ];

@@ -1,0 +1,15 @@
+:host {
+  display: block;
+  padding: 1.5rem;
+}
+
+.barre {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+a {
+  color: var(--lc-navy);
+}
