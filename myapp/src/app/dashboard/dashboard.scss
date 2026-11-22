@@ -1,0 +1,106 @@
+:host {
+  display: block;
+  padding: 1.5rem;
+}
+
+.barre {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.gauche {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.sous-titre {
+  margin: -1rem 0 2rem;
+  text-align: center;
+  color: #6c757d;
+}
+
+.section {
+  max-width: 900px;
+  margin: 1.5rem auto 0.75rem;
+  color: var(--lc-navy);
+  font-weight: 400;
+}
+
+.cartes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  max-width: 900px;
+  margin: 0 auto 0.5rem;
+}
+
+.carte {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.25rem;
+  background: #fff;
+  border-top: 4px solid var(--lc-navy);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  .nombre {
+    font-size: 2.2rem;
+    font-weight: 300;
+    color: var(--lc-navy);
+  }
+
+  .libelle {
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: #6c757d;
+  }
+
+  &.validee {
+    border-top-color: #198754;
+
+    .nombre {
+      color: #198754;
+    }
+  }
+
+  &.retard {
+    border-top-color: #dc3545;
+
+    .nombre {
+      color: #dc3545;
+    }
+  }
+}
+
+.badge {
+  padding: 0.2rem 0.7rem;
+  border-radius: 25px;
+  font-size: 0.8rem;
+  background: #fff3cd;
+  color: #664d03;
+
+  &.ok {
+    background: #d1e7dd;
+    color: #0f5132;
+  }
+}
+
+td.alerte {
+  color: #dc3545;
+  font-weight: 600;
+}
+
+a {
+  color: var(--lc-navy);
+}
+
+.aide {
+  max-width: 900px;
+  margin: 0.25rem auto 1rem;
+  font-size: 0.85rem;
+  color: #6c757d;
+}

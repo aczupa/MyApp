@@ -1,0 +1,93 @@
+<div class="barre">
+  <div class="gauche">
+    <button routerLink="/clients">Clients</button>
+    <button routerLink="/coworkers">Coworkers</button>
+  </div>
+  <app-logout-button />
+</div>
+
+<h2 class="titre-page">Tableau de bord</h2>
+
+@if (data(); as d) {
+
+  <p class="sous-titre">TVA de {{ mois[d.mois - 1] }} {{ d.annee }}</p>
+
+  @for (s of sections(); track s.titre) {
+    <h3 class="section">{{ s.titre }}</h3>
+
+    <div class="cartes">
+      <div class="carte">
+        <span class="nombre">{{ s.stats.aValider }}</span>
+        <span class="libelle">À valider</span>
+      </div>
+
+      <div class="carte validee">
+        <span class="nombre">{{ s.stats.validees }}</span>
+        <span class="libelle">Validé</span>
+      </div>
+
+      <div class="carte retard">
+        <span class="nombre">{{ s.stats.enRetard }}</span>
+        <span class="libelle">En retard</span>
+      </div>
+    </div>
+
+    <p class="aide">{{ s.stats.total }} échéance(s) ce mois-ci</p>
+  }
+
+  <h3 class="section">Échéances des 7 prochains jours</h3>
+
+  <table>
+    <tr>
+      <th>Date</th>
+      <th>Client</th>
+      <th>Coworker</th>
+      <th>Statut</th>
+    </tr>
+    @for (p of d.prochaines; track $index) {
+      <tr>
+        <td>
+          {{ p.date }}
+          <small>({{ p.jours === 0 ? "aujourd'hui" : 'dans ' + p.jours + ' j' }})</small>
+        </td>
+        <td><a [routerLink]="['/clients', p.id]">{{ p.denominationSociale }}</a></td>
+        <td>{{ p.coworker || '—' }}</td>
+        <td><span class="badge" [class.ok]="p.validee">{{ p.validee ? 'Validé' : 'À valider' }}</span></td>
+      </tr>
+    } @empty {
+      <tr><td colspan="4">Aucune échéance dans les 7 prochains jours.</td></tr>
+    }
+  </table>
+
+  <h3 class="section">Charge des coworkers</h3>
+
+  <table>
+    <tr>
+      <th>Coworker</th>
+      <th>Clients</th>
+      <th>À valider</th>
+      <th>Validé</th>
+      <th>En retard</th>
+    </tr>
+    @for (w of d.coworkers; track w.id) {
+      <tr>
+        <td><a [routerLink]="['/coworkers', w.id]">{{ w.nom }}</a></td>
+        <td>{{ w.nbClients }}</td>
+        <td>{{ w.stats.aValider }}</td>
+        <td>{{ w.stats.validees }}</td>
+        <td [class.alerte]="w.stats.enRetard > 0">{{ w.stats.enRetard }}</td>
+      </tr>
+    } @empty {
+      <tr><td colspan="5">Aucun coworker.</td></tr>
+    }
+  </table>
+
+  @if (d.nonAttribues > 0) {
+    <p class="aide">{{ d.nonAttribues }} échéance(s) ce mois-ci sans coworker attribué.</p>
+  }
+
+} @else if (error()) {
+  <p class="aide">Impossible de charger le tableau de bord.</p>
+} @else {
+  <p class="aide">Chargement...</p>
+}

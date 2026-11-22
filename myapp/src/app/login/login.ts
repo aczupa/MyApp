@@ -18,7 +18,7 @@ export class Login {
 
   login() {
     this.auth.login(this.email, this.password).subscribe({
-      next: () => this.router.navigate(['/clients']),
+      next: () => this.router.navigate(['/dashboard']),
       error: () => this.error.set('Adresse e-mail ou mot de passe incorrect.'),
     });
   }

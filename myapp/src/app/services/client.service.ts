@@ -7,7 +7,8 @@ import { HttpClient } from '@angular/common/http';
 export class ClientService {
 
   private apiUrl = 'http://localhost:5115/api/client';
-
+  private dashboardUrl = 'http://localhost:5115/api/dashboard';
+  private coworkerUrl = 'http://localhost:5115/api/coworker';
   constructor(private http: HttpClient) { }
 
 
@@ -47,7 +48,7 @@ export class ClientService {
   setTvaValidation(id: number, annee: number, mois: number, validee: boolean) {
     return this.http.put(`${this.apiUrl}/${id}/tva-validation`, { annee, mois, validee });
   }
-  private coworkerUrl = 'http://localhost:5115/api/coworker';
+  
 
   getCoworkers() {
     return this.http.get<{ id: number; nom: string; nbClients: number }[]>(this.coworkerUrl);
@@ -55,5 +56,9 @@ export class ClientService {
 
   getCoworker(id: number) {
     return this.http.get<any>(`${this.coworkerUrl}/${id}`);
+  }
+
+  getDashboard() {
+    return this.http.get<any>(this.dashboardUrl);
   }
 }
